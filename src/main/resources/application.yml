@@ -1,0 +1,14 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: wx
+  datasource:
+    url: jdbc:mysql://101.201.255.155:3306/wx?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+logging:
+  level:
+    com: debug
