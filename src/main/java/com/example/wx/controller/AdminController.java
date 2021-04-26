@@ -19,7 +19,7 @@ import javax.annotation.Resource;
  * @author ""
  * @since
  */
-@Api("管理员登录api")
+@Api(value = "管理员api", description = "管理员controller")
 @Slf4j
 @RestController
 @RequestMapping("/admin")

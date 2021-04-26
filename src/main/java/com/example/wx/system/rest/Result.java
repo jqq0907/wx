@@ -1,6 +1,8 @@
 package com.example.wx.system.rest;
 
 import cn.hutool.core.util.StrUtil;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,6 +13,7 @@ import java.io.Serializable;
  * @author:
  * @time:
  */
+@ApiModel(value = "result", description = "返回封装类")
 @Data
 @AllArgsConstructor
 public class Result<T> implements Serializable {
@@ -18,26 +21,31 @@ public class Result<T> implements Serializable {
     /**
      * 状态码
      */
+    @ApiModelProperty("状态码")
     private int code;
 
     /****
      * 状态
      */
+    @ApiModelProperty("状态")
     private boolean status;
 
     /**
      * 消息
      */
+    @ApiModelProperty("提示消息")
     private String message;
 
     /**
      * 数据
      */
+    @ApiModelProperty("返回数据")
     private T data;
 
     /**
      * 登录标识 0 ：需要登录 1： 登录成功
      */
+    @ApiModelProperty("登录标志")
     private String loginSuccess;
 
 

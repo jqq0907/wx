@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
  * @author ""
  * @since 2021-04-22
  */
-@ApiModel("管理员")
+@ApiModel(value = "管理员表", description = "管理员表admin")
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class Admin implements Serializable {

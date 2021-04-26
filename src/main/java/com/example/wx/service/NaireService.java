@@ -23,4 +23,12 @@ public interface NaireService {
      * @return
      */
     List<Naire> page(long current, long size, Naire naire);
+
+    /**
+     * 新增一个表单
+     *
+     * @param naire 表单实体类
+     * @return
+     */
+    boolean addOne(Naire naire);
 }

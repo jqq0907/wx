@@ -1,13 +1,14 @@
 package com.example.wx.Entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -17,7 +18,7 @@ import lombok.EqualsAndHashCode;
  * @author "
  * @since 2021-04-22
  */
-@ApiModel("表单表")
+@ApiModel(value = "表单表", description = "表单表naire")
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class Naire implements Serializable {
@@ -41,13 +42,13 @@ public class Naire implements Serializable {
      * 创建时间
      */
     @ApiModelProperty("创建时间")
-    private String nCreattime;
+    private LocalDateTime nCreattime;
 
     /**
      * 截止时间
      */
     @ApiModelProperty("截止时间")
-    private String nDeadline;
+    private LocalDateTime nDeadline;
 
     /**
      * 表单标题
@@ -77,13 +78,22 @@ public class Naire implements Serializable {
      * 修改时间
      */
     @ApiModelProperty("修改时间")
-    private String nUpdatetime;
+    private LocalDateTime nUpdatetime;
 
     /**
      * 是否删除 00未删除01删除
      */
     @ApiModelProperty("是否删除")
     private String nDeleteflag;
+
+    /**** 表外字段 ****/
+
+    /**
+     * 表单问题
+     */
+    @TableField(exist = false)
+    @ApiModelProperty("表单问题")
+    private Question question;
 
 
 }
