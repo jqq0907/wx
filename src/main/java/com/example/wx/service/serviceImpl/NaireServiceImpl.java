@@ -64,13 +64,15 @@ public class NaireServiceImpl implements NaireService {
             //1.新增表单
             // 表单主键id
             naire.setNId(IdUtil.simpleUUID());
+            // 创建时间
+            naire.setNCreattime(LocalDateTime.now());
             // 修改时间
             naire.setNUpdatetime(LocalDateTime.now());
             // 未删除
             naire.setNDeleteflag("00");
             // 管理员id
             naire.setAId("");
-            boolean b = SqlHelper.retBool(naireMapper.insert(naire));
+            naireMapper.insert(naire);
             //2.新增表单问题
             Question question = naire.getQuestion();
             // 题目主键id
@@ -83,9 +85,10 @@ public class NaireServiceImpl implements NaireService {
             question.setQUpdatetime(LocalDateTime.now());
             // 未删除
             question.setQDeleteflag("00");
-            SqlHelper.retBool(questionMapper.insert(question));
+            questionMapper.insert(question);
             //3.新增选项
             List<Options> optionsList = question.getOptionsList();
+            System.out.println(optionsList);
             optionsList.forEach(item -> {
                 // 题目主键id
                 item.setOId(IdUtil.simpleUUID());

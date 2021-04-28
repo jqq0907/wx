@@ -1,6 +1,7 @@
 package com.example.wx.controller;
 
 
+import cn.hutool.json.JSONObject;
 import com.example.wx.Entity.Naire;
 import com.example.wx.service.NaireService;
 import com.example.wx.system.rest.Result;
@@ -40,8 +41,8 @@ public class NaireController {
      */
     @ApiOperation("分页查询表单")
     @GetMapping("/page")
-    public Result page(@ApiParam(value = "表单标题") @RequestParam(required = false) String nTitle,
-                       @ApiParam(value = "表单状态") @RequestParam(required = false) Boolean nStatus,
+    public Result page(@ApiParam(value = "表单标题", required = true) @RequestParam String nTitle,
+                       @ApiParam(value = "表单状态", required = true) @RequestParam Boolean nStatus,
                        @ApiParam(value = "当前页", defaultValue = "1", example = "1") @RequestParam(defaultValue = "1") long current,
                        @ApiParam(value = "页大小", defaultValue = "10", example = "10") @RequestParam(defaultValue = "10") long size) {
         Naire naire = new Naire();
@@ -63,6 +64,7 @@ public class NaireController {
     @ApiImplicitParam(value = "表单实体类", name = "naire")
     @PostMapping("/addOne")
     public Result addOne(@RequestBody Naire naire) {
+        System.out.println(naire);
         boolean b = naireService.addOne(naire);
         return Result.result(b);
     }

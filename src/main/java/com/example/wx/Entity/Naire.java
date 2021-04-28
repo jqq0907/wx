@@ -2,6 +2,7 @@ package com.example.wx.Entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,12 +42,14 @@ public class Naire implements Serializable {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty("创建时间")
     private LocalDateTime nCreattime;
 
     /**
      * 截止时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty("截止时间")
     private LocalDateTime nDeadline;
 
@@ -57,7 +60,7 @@ public class Naire implements Serializable {
     private String nTitle;
 
     /**
-     * 表单状态0未发布，1已发布
+     * 表单状态true未发布，false已发布
      */
     @ApiModelProperty("表单状态")
     private Boolean nStatus;
@@ -77,6 +80,7 @@ public class Naire implements Serializable {
     /**
      * 修改时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty("修改时间")
     private LocalDateTime nUpdatetime;
 

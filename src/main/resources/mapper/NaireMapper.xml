@@ -12,10 +12,10 @@
         from naire
         where n_deleteflag = '00'
         <if test="naire.nTitle != null and '' != naire.nTitle">
-            n_title like concat('%', #{naire.nTitle},'%')
+            and n_title like concat('%', #{naire.nTitle},'%')
         </if>
         <if test="naire.nStatus != null and '' != naire.nStatus">
-            n_title = #{naire.nStatus}
+            and n_status = #{naire.nStatus}
         </if>
     </select>
 </mapper>
