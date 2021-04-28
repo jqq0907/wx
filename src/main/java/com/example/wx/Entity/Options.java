@@ -50,5 +50,8 @@ public class Options implements Serializable {
     @ApiModelProperty(value = "修改时间")
     private LocalDateTime oUpdatetime;
 
+    @ApiModelProperty(value = "是否删除")
+    private String oDeleteflag;
+
 
 }

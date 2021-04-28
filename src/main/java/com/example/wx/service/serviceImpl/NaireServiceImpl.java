@@ -1,6 +1,8 @@
 package com.example.wx.service.serviceImpl;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.example.wx.Entity.Naire;
@@ -11,14 +13,13 @@ import com.example.wx.mapper.OptionsMapper;
 import com.example.wx.mapper.QuestionMapper;
 import com.example.wx.service.NaireService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * <p>
@@ -80,6 +81,8 @@ public class NaireServiceImpl implements NaireService {
             question.setQCreatetime(LocalDateTime.now());
             // 修改时间
             question.setQUpdatetime(LocalDateTime.now());
+            // 未删除
+            question.setQDeleteflag("00");
             SqlHelper.retBool(questionMapper.insert(question));
             //3.新增选项
             List<Options> optionsList = question.getOptionsList();
@@ -94,11 +97,135 @@ public class NaireServiceImpl implements NaireService {
                 item.setOCreatetime(LocalDateTime.now());
                 // 更新时间
                 item.setOUpdatetime(LocalDateTime.now());
+                // 未删除
+                item.setODeleteflag("00");
                 optionsMapper.insert(item);
             });
             return true;
         } catch (Exception e) {
             log.error("新增表单失败", e);
+            return false;
+        }
+    }
+
+    /**
+     * 根据id查询表单
+     *
+     * @param nId 表单id
+     * @return
+     */
+    @Override
+    public Naire queryById(String nId) {
+        // 根据id查询表单数据
+        Naire naire = naireMapper.selectById(nId);
+        if (ObjectUtil.isNull(naire)) {
+            return new Naire();
+        }
+        // 根据表单id查询表单问题
+        Question question = questionMapper.selectOne(new QueryWrapper<Question>()
+                .eq("n_id", nId)
+                .eq("q_deleteflag", "00"));
+        // 根据表单id和题目id查询题目选项
+        List<Options> optionsList = optionsMapper.selectList(new QueryWrapper<Options>()
+                .eq("n_id", nId)
+                .eq("q_id", question.getQId())
+                .eq("q_deleteflag", "00"));
+
+        question.setOptionsList(optionsList);
+        naire.setQuestion(question);
+        return naire;
+    }
+
+    /**
+     * 更新一个表单，问题，选项
+     *
+     * @param naire 表单实体类
+     * @return
+     */
+    @Override
+    public boolean updateOne(Naire naire) {
+        try {
+            //1.更新表单
+            // 修改时间
+            naire.setNUpdatetime(LocalDateTime.now());
+            naireMapper.updateById(naire);
+            //2.更新表单问题
+            Question question = naire.getQuestion();
+            // 修改时间
+            question.setQUpdatetime(LocalDateTime.now());
+            questionMapper.updateById(question);
+            //3.更新选项
+            List<Options> optionsList = question.getOptionsList();
+            //删除之前选项
+            Options options = new Options();
+            options.setODeleteflag("01");
+            optionsMapper.update(options, new QueryWrapper<Options>()
+                    .eq("n_id", naire.getNId())
+                    .eq("q_id", question.getQId()));
+            // 新增修改的选项
+            optionsList.forEach(item -> {
+                // 题目主键id
+                item.setOId(IdUtil.simpleUUID());
+                // 表单id
+                item.setNId(naire.getNId());
+                // 题目id
+                item.setQId(question.getQId());
+                // 创建时间
+                item.setOCreatetime(LocalDateTime.now());
+                // 更新时间
+                item.setOUpdatetime(LocalDateTime.now());
+                // 未删除
+                item.setODeleteflag("00");
+                optionsMapper.insert(item);
+            });
+            return true;
+        } catch (Exception e) {
+            log.error("修改表单失败", e);
+            return false;
+        }
+    }
+
+    /**
+     * 更新表单发布状态
+     *
+     * @param nId 表单id
+     * @return
+     */
+    @Override
+    public boolean updateStatusById(String nId) {
+        int i = naireMapper.updateStatusById(nId);
+        return false;
+    }
+
+    /**
+     * 删除表单
+     *
+     * @param nId 表单id
+     * @return
+     */
+    @Override
+    public boolean deleteById(String nId) {
+        try {
+            //1.逻辑删除表单
+            Naire naire = new Naire();
+            naire.setNId(nId);
+            naire.setNDeleteflag("01");
+            naireMapper.updateById(naire);
+            //2.逻辑删除表单问题
+            Question question = new Question();
+            question.setNId(nId);
+            question.setQDeleteflag("01");
+            questionMapper.update(question, new QueryWrapper<Question>()
+                    .eq("n_id", nId));
+            //3.逻辑删除问题选项
+            Options options = new Options();
+            options.setNId(nId);
+            options.setODeleteflag("01");
+            optionsMapper.update(options, new QueryWrapper<Options>()
+                    .eq("n_id", nId));
+            return true;
+        } catch (Exception e) {
+            log.error("删除表单失败", e);
             return false;
         }
     }

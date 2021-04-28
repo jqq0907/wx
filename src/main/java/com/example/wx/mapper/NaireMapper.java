@@ -25,4 +25,12 @@ public interface NaireMapper extends BaseMapper<Naire> {
      * @return
      */
     List<Naire> page(Page<Naire> page,@Param("naire") Naire naire);
+
+    /**
+     * 更新表单发布状态
+     *
+     * @param nId 表单id
+     * @return
+     */
+    int updateStatusById(String nId);
 }

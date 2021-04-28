@@ -45,7 +45,9 @@ public class NaireController {
                        @ApiParam(value = "当前页", defaultValue = "1", example = "1") @RequestParam(defaultValue = "1") long current,
                        @ApiParam(value = "页大小", defaultValue = "10", example = "10") @RequestParam(defaultValue = "10") long size) {
         Naire naire = new Naire();
+        // 表单标题
         naire.setNTitle(nTitle);
+        // 是否发布
         naire.setNStatus(nStatus);
         List<Naire> list = naireService.page(current, size, naire);
         return Result.success(list, "分页数据");
@@ -60,8 +62,61 @@ public class NaireController {
     @ApiOperation("新增一个表单")
     @ApiImplicitParam(value = "表单实体类", name = "naire")
     @PostMapping("/addOne")
-    public Result addOne(@RequestBody(required = true) Naire naire) {
-        naireService.addOne(naire);
-        return null;
+    public Result addOne(@RequestBody Naire naire) {
+        boolean b = naireService.addOne(naire);
+        return Result.result(b);
+    }
+
+    /**
+     * 根据表单id查询表单
+     *
+     * @param nId 表单id
+     * @return
+     */
+    @ApiOperation("根据id查询表单")
+    @GetMapping("/queryById")
+    public Result queryById(@ApiParam(value = "表单id", required = true) @RequestParam String nId) {
+        Naire naire = naireService.queryById(nId);
+        return Result.success(naire, "查询成功");
+    }
+
+    /**
+     * 更新一个表单，问题，选项
+     *
+     * @param naire 表单实体类
+     * @return
+     */
+    @ApiOperation("更新一个表单")
+    @ApiImplicitParam(value = "表单实体类", name = "naire")
+    @PostMapping("/updateOne")
+    public Result updateOne(@RequestBody Naire naire) {
+        boolean b = naireService.updateOne(naire);
+        return Result.result(b);
+    }
+
+    /**
+     * 发布/取消发布表单
+     *
+     * @param nId 表单id
+     * @return
+     */
+    @ApiOperation("发布/取消发布表单")
+    @GetMapping("/publishNaire")
+    public Result publishNaire(@ApiParam(value = "表单id", required = true) @RequestParam String nId) {
+        boolean b = naireService.updateStatusById(nId);
+        return Result.result(b);
+    }
+
+    /**
+     * 删除表单
+     *
+     * @param nId 表单id
+     * @return
+     */
+    @ApiOperation("删除表单")
+    @GetMapping("/deleteById")
+    public Result deleteById(@ApiParam(value = "表单id", required = true) @RequestParam String nId) {
+        boolean b = naireService.deleteById(nId);
+        return Result.result(b);
     }
 }

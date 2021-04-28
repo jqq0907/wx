@@ -55,4 +55,7 @@ public class Question implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(value = "题目选项")
     private List<Options> optionsList;
+
+    @ApiModelProperty(value = "是否删除")
+    private String qDeleteflag;
 }
