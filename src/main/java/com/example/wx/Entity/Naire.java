@@ -60,10 +60,10 @@ public class Naire implements Serializable {
     private String nTitle;
 
     /**
-     * 表单状态true未发布，false已发布
+     * 表单状态0未发布，1已发布
      */
     @ApiModelProperty("表单状态")
-    private Boolean nStatus;
+    private String nStatus;
 
     /**
      * 表单介绍
@@ -90,6 +90,18 @@ public class Naire implements Serializable {
     @ApiModelProperty("是否删除")
     private String nDeleteflag;
 
+    /**
+     * 是否分析 0未分析1已分析
+     */
+    @ApiModelProperty("是否分析标志")
+    private String nAnalysisFlag;
+
+    /**
+     * 分析结果
+     */
+    @ApiModelProperty("分析结果")
+    private String nResult;
+
     /**** 表外字段 ****/
 
     /**
@@ -98,6 +110,13 @@ public class Naire implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty("表单问题")
     private Question question;
+
+    /**
+     * 截止日期str
+     */
+    @TableField(exist = false)
+    @ApiModelProperty("截止日期str")
+    private String nDeadlineStr;
 
 
 }

@@ -1,6 +1,8 @@
 package com.example.wx.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.wx.Entity.Naire;
+import com.example.wx.Entity.SelectEntity;
 
 import java.util.List;
 
@@ -22,7 +24,7 @@ public interface NaireService {
      * @param naire   查询参数
      * @return
      */
-    List<Naire> page(long current, long size, Naire naire);
+    Page<Naire> page(long current, long size, Naire naire);
 
     /**
      * 新增一个表单
@@ -63,4 +65,11 @@ public interface NaireService {
      * @return
      */
     boolean deleteById(String nId);
+
+    /**
+     * 表单名称select
+     *
+     * @return
+     */
+    List<SelectEntity> dicNaireName();
 }

@@ -1,8 +1,9 @@
 package com.example.wx.controller;
 
 
-import cn.hutool.json.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.wx.Entity.Naire;
+import com.example.wx.Entity.SelectEntity;
 import com.example.wx.service.NaireService;
 import com.example.wx.system.rest.Result;
 import io.swagger.annotations.Api;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -42,7 +44,7 @@ public class NaireController {
     @ApiOperation("分页查询表单")
     @GetMapping("/page")
     public Result page(@ApiParam(value = "表单标题", required = true) @RequestParam String nTitle,
-                       @ApiParam(value = "表单状态", required = true) @RequestParam Boolean nStatus,
+                       @ApiParam(value = "表单状态", required = true) @RequestParam String nStatus,
                        @ApiParam(value = "当前页", defaultValue = "1", example = "1") @RequestParam(defaultValue = "1") long current,
                        @ApiParam(value = "页大小", defaultValue = "10", example = "10") @RequestParam(defaultValue = "10") long size) {
         Naire naire = new Naire();
@@ -50,8 +52,30 @@ public class NaireController {
         naire.setNTitle(nTitle);
         // 是否发布
         naire.setNStatus(nStatus);
-        List<Naire> list = naireService.page(current, size, naire);
-        return Result.success(list, "分页数据");
+        Page<Naire> page = naireService.page(current, size, naire);
+        return Result.success(page, "分页数据");
+    }
+
+    /**
+     * 微信端分页查询表单
+     *
+     * @param current 当前页
+     * @param size    页大小
+     * @return
+     */
+    @ApiOperation("微信端分页查询表单")
+    @GetMapping("/pageForWx")
+    public Result pageForWx(@ApiParam(value = "当前页", defaultValue = "1", example = "1") @RequestParam(defaultValue = "1") long current,
+                            @ApiParam(value = "页大小", defaultValue = "10", example = "10") @RequestParam(defaultValue = "10") long size) {
+        Naire naire = new Naire();
+        // 表单标题
+        naire.setNTitle("");
+        // 是否发布
+        naire.setNStatus("1");
+        // 截止日期str
+        naire.setNDeadlineStr("time");
+        Page<Naire> page = naireService.page(current, size, naire);
+        return Result.success(page, "微信端分页数据");
     }
 
     /**
@@ -120,5 +144,17 @@ public class NaireController {
     public Result deleteById(@ApiParam(value = "表单id", required = true) @RequestParam String nId) {
         boolean b = naireService.deleteById(nId);
         return Result.result(b);
+    }
+
+    /**
+     * 表单名称select
+     *
+     * @return
+     */
+    @ApiOperation("表单名称select")
+    @GetMapping("/dicNaireName")
+    public Result dicNaireName() {
+        List<SelectEntity> list = naireService.dicNaireName();
+        return Result.success(list);
     }
 }

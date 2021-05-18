@@ -3,11 +3,12 @@ package com.example.wx.service.serviceImpl;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.example.wx.Entity.Naire;
 import com.example.wx.Entity.Options;
 import com.example.wx.Entity.Question;
+import com.example.wx.Entity.SelectEntity;
 import com.example.wx.mapper.NaireMapper;
 import com.example.wx.mapper.OptionsMapper;
 import com.example.wx.mapper.QuestionMapper;
@@ -19,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * <p>
@@ -42,13 +42,14 @@ public class NaireServiceImpl implements NaireService {
     private OptionsMapper optionsMapper;
 
     @Override
-    public List<Naire> page(long current, long size, Naire naire) {
+    public Page<Naire> page(long current, long size, Naire naire) {
         Page<Naire> page = new Page<>(current, size);
         try {
-            return naireMapper.page(page, naire);
+            List<Naire> list = naireMapper.page(page, naire);
+            return page.setRecords(list);
         } catch (Exception e) {
-            log.error("分页查询表单失败", e);
-            return null;
+            log.error("微信端分页查询表单", e);
+            return page;
         }
     }
 
@@ -72,6 +73,8 @@ public class NaireServiceImpl implements NaireService {
             naire.setNDeleteflag("00");
             // 管理员id
             naire.setAId("");
+            // 未分析
+            naire.setNAnalysisFlag("0");
             naireMapper.insert(naire);
             //2.新增表单问题
             Question question = naire.getQuestion();
@@ -132,7 +135,7 @@ public class NaireServiceImpl implements NaireService {
         List<Options> optionsList = optionsMapper.selectList(new QueryWrapper<Options>()
                 .eq("n_id", nId)
                 .eq("q_id", question.getQId())
-                .eq("q_deleteflag", "00"));
+                .eq("o_deleteflag", "00"));
 
         question.setOptionsList(optionsList);
         naire.setQuestion(question);
@@ -156,13 +159,14 @@ public class NaireServiceImpl implements NaireService {
             Question question = naire.getQuestion();
             // 修改时间
             question.setQUpdatetime(LocalDateTime.now());
-            questionMapper.updateById(question);
+            questionMapper.update(question, new UpdateWrapper<Question>()
+                    .eq("q_id", question.getQId()));
             //3.更新选项
             List<Options> optionsList = question.getOptionsList();
             //删除之前选项
             Options options = new Options();
             options.setODeleteflag("01");
-            optionsMapper.update(options, new QueryWrapper<Options>()
+            optionsMapper.update(options, new UpdateWrapper<Options>()
                     .eq("n_id", naire.getNId())
                     .eq("q_id", question.getQId()));
             // 新增修改的选项
@@ -196,8 +200,13 @@ public class NaireServiceImpl implements NaireService {
      */
     @Override
     public boolean updateStatusById(String nId) {
-        int i = naireMapper.updateStatusById(nId);
-        return false;
+        try {
+            naireMapper.updateStatusById(nId);
+            return true;
+        } catch (Exception e) {
+            log.error("更新表单发布状态失败", e);
+            return false;
+        }
     }
 
     /**
@@ -231,5 +240,15 @@ public class NaireServiceImpl implements NaireService {
             log.error("删除表单失败", e);
             return false;
         }
+    }
+
+    /**
+     * 表单名称select
+     *
+     * @return
+     */
+    @Override
+    public List<SelectEntity> dicNaireName() {
+        return naireMapper.selectNaireNames();
     }
 }

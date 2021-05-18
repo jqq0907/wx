@@ -4,7 +4,8 @@
     <!--更新表达发布状态-->
     <update id="updateStatusById">
         update naire
-        set n_status = !n_status
+        set n_status = case n_status when 0 then 1 when 1 then 0 end
+        where n_id = #{nId}
     </update>
     <!--分页查询-->
     <select id="page" resultType="com.example.wx.Entity.Naire">
@@ -17,5 +18,15 @@
         <if test="naire.nStatus != null and '' != naire.nStatus">
             and n_status = #{naire.nStatus}
         </if>
+        <if test="naire.nDeadlineStr != null and '' != naire.nDeadlineStr">
+            and n_deadline >= now()
+        </if>
+
+    </select>
+    <!--表单标题select-->
+    <select id="selectNaireNames" resultType="com.example.wx.Entity.SelectEntity">
+        select distinct n_id    as value,
+                        n_title as name
+        from naire
     </select>
 </mapper>
