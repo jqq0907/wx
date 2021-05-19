@@ -1,10 +1,13 @@
 package com.example.wx.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.wx.Entity.Echart;
 import com.example.wx.Entity.Naire;
 import com.example.wx.Entity.SelectEntity;
+import com.example.wx.Entity.Submit;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -72,4 +75,39 @@ public interface NaireService {
      * @return
      */
     List<SelectEntity> dicNaireName();
+
+    /**
+     * 表单分析图表
+     *
+     * @param nId 表单id
+     * @return
+     */
+    List<Echart> analysisEchart(String nId);
+
+    /**
+     * 表单分析文本数据
+     *
+     * @param nId     表单id
+     * @param current 当前页
+     * @param size    页大小
+     * @return
+     */
+    Page<Submit> analysisText(String nId, long current, long size);
+
+    /**
+     * 分析提交
+     *
+     * @param nId     表单id
+     * @param nResult 分析结果
+     * @return
+     */
+    boolean analysisSubmit(String nId, String nResult);
+
+    /**
+     * 根据id查询表单
+     *
+     * @param nId 表单id
+     * @return
+     */
+    Naire getOneById(String nId);
 }

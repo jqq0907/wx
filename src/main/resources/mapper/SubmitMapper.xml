@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.wx.mapper.SubmitMapper">
+    <!--更新分析结果和分析状态-->
+    <update id="updateResult">
+        update naire
+        set
+        n_analysis_flag = '1',
+        n_result = #{nResult}
+        where n_id = #{nId}
+    </update>
     <!--根据nId分页查询-->
     <select id="page" resultType="com.example.wx.Entity.Submit">
         select
@@ -15,5 +23,15 @@
         left join users c
         on a.u_id=c.u_id
         where a.n_id = #{nId}
+    </select>
+    <!--表单分析图表数据-->
+    <select id="selectAnalysisEchart" resultType="com.example.wx.Entity.Echart">
+        select o_value  as name,
+               count(1) as value
+        from submit a
+                 left join options b on a.o_id = b.o_id
+        where a.n_id = #{nId}
+        group by o_value
+        order by value desc
     </select>
 </mapper>

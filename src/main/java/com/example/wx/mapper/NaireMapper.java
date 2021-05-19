@@ -1,6 +1,7 @@
 package com.example.wx.mapper;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.wx.Entity.Echart;
 import com.example.wx.Entity.Naire;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.wx.Entity.SelectEntity;

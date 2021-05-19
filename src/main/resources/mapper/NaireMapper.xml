@@ -9,19 +9,21 @@
     </update>
     <!--分页查询-->
     <select id="page" resultType="com.example.wx.Entity.Naire">
-        select *
-        from naire
-        where n_deleteflag = '00'
+        select
+        a.*,
+        b.q_type
+        from naire a
+        left join question b on a.n_id=b.n_id
+        where a.n_deleteflag = '00'
         <if test="naire.nTitle != null and '' != naire.nTitle">
-            and n_title like concat('%', #{naire.nTitle},'%')
+            and a.n_title like concat('%', #{naire.nTitle},'%')
         </if>
         <if test="naire.nStatus != null and '' != naire.nStatus">
-            and n_status = #{naire.nStatus}
+            and a.n_status = #{naire.nStatus}
         </if>
         <if test="naire.nDeadlineStr != null and '' != naire.nDeadlineStr">
-            and n_deadline >= now()
+            and a.n_deadline >= now()
         </if>
-
     </select>
     <!--表单标题select-->
     <select id="selectNaireNames" resultType="com.example.wx.Entity.SelectEntity">

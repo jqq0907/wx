@@ -1,6 +1,7 @@
 package com.example.wx;
 
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import com.itextpdf.text.*;
@@ -72,5 +73,11 @@ class WxApplicationTests {
         } finally {
             document.close();
         }
+    }
+
+    @Test
+    public void test3(){
+        String s = IdUtil.simpleUUID();
+        System.out.println(s);
     }
 }

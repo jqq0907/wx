@@ -118,5 +118,12 @@ public class Naire implements Serializable {
     @ApiModelProperty("截止日期str")
     private String nDeadlineStr;
 
+    /**
+     * 题目类型
+     */
+    @TableField(exist = false)
+    @ApiModelProperty("题目类型")
+    private String qType;
+
 
 }

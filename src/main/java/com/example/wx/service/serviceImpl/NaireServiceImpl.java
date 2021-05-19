@@ -5,13 +5,11 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.wx.Entity.Naire;
-import com.example.wx.Entity.Options;
-import com.example.wx.Entity.Question;
-import com.example.wx.Entity.SelectEntity;
+import com.example.wx.Entity.*;
 import com.example.wx.mapper.NaireMapper;
 import com.example.wx.mapper.OptionsMapper;
 import com.example.wx.mapper.QuestionMapper;
+import com.example.wx.mapper.SubmitMapper;
 import com.example.wx.service.NaireService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * <p>
@@ -40,6 +40,8 @@ public class NaireServiceImpl implements NaireService {
     private QuestionMapper questionMapper;
     @Resource
     private OptionsMapper optionsMapper;
+    @Resource
+    private SubmitMapper submitMapper;
 
     @Override
     public Page<Naire> page(long current, long size, Naire naire) {
@@ -48,7 +50,7 @@ public class NaireServiceImpl implements NaireService {
             List<Naire> list = naireMapper.page(page, naire);
             return page.setRecords(list);
         } catch (Exception e) {
-            log.error("微信端分页查询表单", e);
+            log.error("分页查询表单出错", e);
             return page;
         }
     }
@@ -250,5 +252,55 @@ public class NaireServiceImpl implements NaireService {
     @Override
     public List<SelectEntity> dicNaireName() {
         return naireMapper.selectNaireNames();
+    }
+
+    /**
+     * 表单分析图表
+     *
+     * @param nId 表单id
+     * @return
+     */
+    @Override
+    public List<Echart> analysisEchart(String nId) {
+        return submitMapper.selectAnalysisEchart(nId);
+    }
+
+    /**
+     * 表单分析文本数据(分页)
+     *
+     * @param nId     表单id
+     * @param current 当前页
+     * @param size    页大小
+     * @return
+     */
+    @Override
+    public Page<Submit> analysisText(String nId, long current, long size) {
+        Page page = new Page(current, size);
+        List list = submitMapper.page(page, nId);
+        return page.setRecords(list);
+    }
+
+    /**
+     * 分析提交
+     *
+     * @param nId     表单id
+     * @param nResult 分析结果
+     * @return
+     */
+    @Override
+    public boolean analysisSubmit(String nId, String nResult) {
+        return submitMapper.updateResult(nId, nResult);
+
+    }
+
+    /**
+     * 根据id查询表单
+     *
+     * @param nId 表单id
+     * @return
+     */
+    @Override
+    public Naire getOneById(String nId) {
+        return naireMapper.selectOne(new QueryWrapper<Naire>().eq("n_id", nId));
     }
 }

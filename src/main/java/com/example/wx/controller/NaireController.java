@@ -2,9 +2,9 @@ package com.example.wx.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.wx.Entity.Naire;
-import com.example.wx.Entity.SelectEntity;
+import com.example.wx.Entity.*;
 import com.example.wx.service.NaireService;
+import com.example.wx.service.QuestionService;
 import com.example.wx.system.rest.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -33,6 +34,8 @@ public class NaireController {
 
     @Resource
     private NaireService naireService;
+    @Resource
+    private QuestionService questionService;
 
     /**
      * @param nTitle  表单标题
@@ -156,5 +159,63 @@ public class NaireController {
     public Result dicNaireName() {
         List<SelectEntity> list = naireService.dicNaireName();
         return Result.success(list);
+    }
+
+    /**
+     * 分析图表数据
+     *
+     * @param nId 表单id
+     * @return
+     */
+    @ApiOperation("分析图表数据")
+    @GetMapping("/analysisEchart")
+    public Result analysisEchart(@ApiParam(value = "表单id", required = true) @RequestParam String nId) {
+        List<Echart> echarts = naireService.analysisEchart(nId);
+        return Result.success(echarts);
+    }
+
+    /**
+     * 分析文本数据(分页)
+     *
+     * @param nId     表单id
+     * @param current 当前页
+     * @param size    页大小
+     * @return
+     */
+    @ApiOperation("分析文本数据(分页)")
+    @GetMapping("/analysisText")
+    public Result analysisText(@ApiParam(value = "表单id", required = true) @RequestParam String nId,
+                               @ApiParam(value = "当前页", defaultValue = "1", example = "1") @RequestParam(defaultValue = "1") long current,
+                               @ApiParam(value = "页大小", defaultValue = "10", example = "10") @RequestParam(defaultValue = "10") long size) {
+        Page<Submit> page = naireService.analysisText(nId, current, size);
+        return Result.success(page);
+    }
+
+    /**
+     * 分析提交
+     *
+     * @param nId     表单id
+     * @param nResult 分析结果
+     * @return
+     */
+    @ApiOperation("分析提交")
+    @GetMapping("/analysisSubmit")
+    public Result analysisSubmit(@ApiParam(value = "表单id", required = true) @RequestParam String nId,
+                                 @ApiParam(value = "分析结果", required = true) @RequestParam String nResult) {
+        boolean b = naireService.analysisSubmit(nId, nResult);
+        return Result.result(b);
+    }
+
+    /**
+     * 微信端展示结果
+     *
+     * @param nId 表单id
+     * @return
+     */
+    @ApiOperation("微信端展示结果")
+    @GetMapping("/getOneById")
+    public Result getOneById(@ApiParam(value = "表单id", required = true) @RequestParam String nId) {
+        Naire naire = naireService.getOneById(nId);
+        return Result.success(naire);
     }
 }
