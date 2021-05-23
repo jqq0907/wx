@@ -21,9 +21,6 @@
         <if test="naire.nStatus != null and '' != naire.nStatus">
             and a.n_status = #{naire.nStatus}
         </if>
-        <if test="naire.nDeadlineStr != null and '' != naire.nDeadlineStr">
-            and a.n_deadline >= now()
-        </if>
     </select>
     <!--表单标题select-->
     <select id="selectNaireNames" resultType="com.example.wx.Entity.SelectEntity">

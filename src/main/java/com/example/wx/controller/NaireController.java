@@ -75,8 +75,6 @@ public class NaireController {
         naire.setNTitle("");
         // 是否发布
         naire.setNStatus("1");
-        // 截止日期str
-        naire.setNDeadlineStr("time");
         Page<Naire> page = naireService.page(current, size, naire);
         return Result.success(page, "微信端分页数据");
     }
