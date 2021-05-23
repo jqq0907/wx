@@ -40,6 +40,9 @@ public class Submit implements Serializable {
     @ApiModelProperty(value = "结果文字")
     private String oAddtion;
 
+    @ApiModelProperty("创建时间")
+    private LocalDateTime sCreateTime;
+
     /**** 表外字段 ****/
 
     @TableField(exist = false)

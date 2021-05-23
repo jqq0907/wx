@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -169,7 +171,13 @@ public class NaireController {
     @GetMapping("/analysisEchart")
     public Result analysisEchart(@ApiParam(value = "表单id", required = true) @RequestParam String nId) {
         List<Echart> echarts = naireService.analysisEchart(nId);
-        return Result.success(echarts);
+        // 表单截止日期
+        Naire naire = naireService.getOneById(nId);
+        String jzrq = naire.getNDeadline().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        Map<String, Object> map = new HashMap<>();
+        map.put("echarts", echarts);
+        map.put("jzrq", jzrq);
+        return Result.success(map);
     }
 
     /**
@@ -186,7 +194,13 @@ public class NaireController {
                                @ApiParam(value = "当前页", defaultValue = "1", example = "1") @RequestParam(defaultValue = "1") long current,
                                @ApiParam(value = "页大小", defaultValue = "10", example = "10") @RequestParam(defaultValue = "10") long size) {
         Page<Submit> page = naireService.analysisText(nId, current, size);
-        return Result.success(page);
+        // 表单截止日期
+        Naire naire = naireService.getOneById(nId);
+        String jzrq = naire.getNDeadline().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        Map<String, Object> map = new HashMap<>();
+        map.put("page", page);
+        map.put("jzrq", jzrq);
+        return Result.success(map);
     }
 
     /**

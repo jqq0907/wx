@@ -8,6 +8,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 
 /**
  * @description: 微信端表单提交消费者
@@ -24,6 +25,8 @@ public class SubmitListener {
         System.out.println(msg);
         // json转实体类
         Submit submit = JSONObject.parseObject(msg, Submit.class);
+        // 创建时间
+        submit.setSCreateTime(LocalDateTime.now());
         // 循环选项
         String[] oIds = submit.getOIds();
         if (oIds != null && oIds.length > 0) {

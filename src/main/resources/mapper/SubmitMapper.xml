@@ -15,7 +15,7 @@
         a.u_id as uId,
         b.o_value as oValue,
         a.o_addtion as oAddtion,
-        c.u_active_time as uActiveTime,
+        a.s_create_time as uActiveTime,
         c.u_name as uName
         from submit a
         left join options b
