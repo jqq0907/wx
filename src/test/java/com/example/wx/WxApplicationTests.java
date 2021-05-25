@@ -2,20 +2,22 @@ package com.example.wx;
 
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.*;
 import com.lowagie.text.pdf.PdfCell;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,7 +54,7 @@ class WxApplicationTests {
             // 生成一个两列的表格
             PdfPTable table = new PdfPTable(2);
             // 无边框
-            table.getDefaultCell().setBorder(PdfCell.NO_BORDER);
+//            table.getDefaultCell().setBorder(PdfCell.NO_BORDER);
             PdfPCell cell;
             int size = 15;
             cell = new PdfPCell(new Phrase("一", font));
@@ -61,6 +63,7 @@ class WxApplicationTests {
 //            cell.setBorder(PdfCell.NO_BORDER);
             table.addCell(cell);
             table.addCell(new PdfPCell(new Phrase("二", font)));
+
             document.add(table);
             /*document.add(new Paragraph("签字:", font));
             document.add(new Paragraph("日期:", font));*/
@@ -77,7 +80,73 @@ class WxApplicationTests {
 
     @Test
     public void test3(){
-        String s = IdUtil.simpleUUID();
-        System.out.println(s);
+        Document document = new Document(new Rectangle(PageSize.A4));
+        PdfReader reader;
+        FileOutputStream out;
+        ByteArrayOutputStream bos = null;
+        PdfStamper stamper;
+        try {
+            // 模板路径
+            String templatePath = "C:\\Users\\xiaoen\\Desktop\\pdfTemplate\\wgtxTemplate.pdf";
+            // 文件名称
+            String fileName = URLEncoder.encode("违规通行" + LocalDate.now().toString() + ".pdf", "UTF-8");
+
+            out = new FileOutputStream(fileName);
+            PdfWriter writer = PdfWriter.getInstance(document, out);
+            // 读取模板
+            reader = new PdfReader(templatePath);
+            bos = new ByteArrayOutputStream();
+            stamper = new PdfStamper(reader, bos);
+            // 模板表单
+            AcroFields form = stamper.getAcroFields();
+            BaseFont baseFont = BaseFont.createFont("STSongStd-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
+            form.addSubstitutionFont(baseFont);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            // 车牌号
+            form.setField("carNo", "d");
+            // 通行证号
+            form.setField("txzbh", "d");
+            // 车辆类型
+            form.setField("carType", "2");
+            // 有效期起
+            form.setField("yxqs", "");
+            // 驾驶员名称
+            form.setField("jsyxm", "");
+            // 有效期止
+            form.setField("yxqz", "");
+            // 驾驶员电话
+            form.setField("jsylxfs", "");
+            // 违法类型
+            form.setField("wflx", "");
+            // 不可编辑
+            stamper.setFormFlattening(true);
+            stamper.close();
+            PdfCopy copy = new PdfCopy(document, out);
+            document.addTitle("违规通行");
+            document.open();
+            // 生成一个两列的表格
+            PdfPTable table = new PdfPTable(2);
+            // 无边框
+            table.getDefaultCell().setBorder(PdfCell.NO_BORDER);
+            PdfPCell cell;
+            int size = 15;
+            Font font = new Font(BaseFont.createFont("STSongStd-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED));
+            cell = new PdfPCell(new Phrase("一", font));
+            // 设置高度
+            cell.setFixedHeight(size);
+//            cell.setBorder(PdfCell.NO_BORDER);
+            table.addCell(cell);
+            table.addCell(new PdfPCell(new Phrase("二", font)));
+            document.add(table);
+            PdfImportedPage importPage = copy.getImportedPage(
+                    new PdfReader(bos.toByteArray()), 1);
+            copy.addPage(importPage);
+            bos.flush();
+            bos.close();
+        } catch (DocumentException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            document.close();
+        }
     }
 }
